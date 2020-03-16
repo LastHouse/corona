@@ -214,11 +214,7 @@ export default function Stats() {
             <h4 className={classes.number}>{_.size(recovered)}</h4>
             <Divider />
             <div className={classes.button}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                href="www.teemuperatalo.com"
-              >
+              <Button variant="outlined" color="secondary" href="index.html">
                 Go Back Home
               </Button>
             </div>
