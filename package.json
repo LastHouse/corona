@@ -70,7 +70,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "node scripts/build.js && mv build/index.html build/corona.html",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
