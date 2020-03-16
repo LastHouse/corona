@@ -8,6 +8,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import Moment from 'react-moment';
 import 'moment-timezone';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,6 +27,10 @@ const useStyles = makeStyles(theme => ({
   },
   number: {
     color: 'red'
+  },
+  button: {
+    padding: theme.spacing(2),
+    elevation: 0
   },
   pie: {
     padding: theme.spacing(0),
@@ -135,9 +140,7 @@ export default function Stats() {
         fill="white"
         textAnchor={x > cx ? 'start' : 'end'}
         dominantBaseline="central"
-      >
-        {/*  {`${(percent * 100).toFixed(0)}%`} */}
-      </text>
+      ></text>
     );
   };
 
@@ -209,6 +212,16 @@ export default function Stats() {
 
             <p>Total confirmed recovered cases in Finland: </p>
             <h4 className={classes.number}>{_.size(recovered)}</h4>
+            <Divider />
+            <div className={classes.button}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                href="www.teemuperatalo.com"
+              >
+                Go Back Home
+              </Button>
+            </div>
             <Divider />
             <p>
               This data is provided by:{' '}
