@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PieChart, Pie, Tooltip, Cell } from 'recharts';
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from 'recharts';
 import _ from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -152,7 +152,7 @@ export default function Stats() {
 
       Cell: date => (
         <div>
-          <Moment format="DD/MM/YYYY  HH:mm">{date.value}</Moment>
+          <Moment format="DD/MM/YYYY">{date.value}</Moment>
         </div>
       )
     },
@@ -172,26 +172,28 @@ export default function Stats() {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={4}>
           <div className={classes.pie}>
-            <PieChart alignItems="center" width={400} height={400}>
-              <Tooltip />
-              <Pie
-                data={data}
-                cx={200}
-                cy={200}
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={150}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-            </PieChart>
+            <div style={{ width: '100%', height: 400 }}>
+              <ResponsiveContainer>
+                <PieChart>
+                  <Tooltip />
+
+                  <Pie
+                    dataKey="value"
+                    data={data}
+                    fill="#8884d8"
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                  >
+                    {data.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </Grid>
         <Grid item xs={12} sm={8}>
