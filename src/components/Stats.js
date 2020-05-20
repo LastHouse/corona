@@ -10,10 +10,10 @@ import Moment from 'react-moment';
 import 'moment-timezone';
 import Button from '@material-ui/core/Button';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   text: {
     paddingRight: theme.spacing(4),
@@ -23,14 +23,14 @@ const useStyles = makeStyles(theme => ({
     spacing: 4,
     alignContent: 'stretch',
     textAlign: 'left',
-    p: { color: theme.palette.text.secondary }
+    p: { color: theme.palette.text.secondary },
   },
   number: {
-    color: 'red'
+    color: 'red',
   },
   button: {
     padding: theme.spacing(2),
-    elevation: 0
+    elevation: 0,
   },
   pie: {
     padding: theme.spacing(0),
@@ -38,55 +38,41 @@ const useStyles = makeStyles(theme => ({
     spacing: 4,
     alignContent: 'center',
     textAlign: 'center',
-    color: theme.palette.text.secondary
-  }
+    color: theme.palette.text.secondary,
+  },
 }));
 
 export default function Stats() {
   const [confirmed, setConfirmed] = useState([]);
   const [deaths, setDeaths] = useState([]);
-  const [recovered, setRecovered] = useState([]);
   const classes = useStyles();
 
-  useEffect(() => fetchConfirmed(), []);
-  useEffect(() => fetchDeaths(), []);
-  useEffect(() => fetchRecovered(), []);
+  useEffect(() => fetchData(), []);
 
-  const fetchConfirmed = () => {
+  const fetchData = () => {
     fetch(
-      'https://w3qa5ydb4l.execute-api.eu-west-1.amazonaws.com/prod/finnishCoronaData'
+      'https://w3qa5ydb4l.execute-api.eu-west-1.amazonaws.com/prod/finnishCoronaData/v2'
     )
-      .then(response => response.json())
-      .then(data => setConfirmed(data.confirmed));
-  };
+      .then((response) => response.json())
+      .then((data) => {
+        setConfirmed(data.confirmed);
+        setDeaths(data.deaths);
+      })
 
-  const fetchDeaths = () => {
-    fetch(
-      'https://w3qa5ydb4l.execute-api.eu-west-1.amazonaws.com/prod/finnishCoronaData'
-    )
-      .then(response => response.json())
-      .then(data => setDeaths(data.deaths));
-  };
-
-  const fetchRecovered = () => {
-    fetch(
-      'https://w3qa5ydb4l.execute-api.eu-west-1.amazonaws.com/prod/finnishCoronaData'
-    )
-      .then(response => response.json())
-      .then(data => setRecovered(data.recovered));
+      .catch((error) => console.log(error));
   };
 
   const result = _(confirmed)
-    .groupBy(x => x.healthCareDistrict)
+    .groupBy((x) => x.healthCareDistrict)
     .map((value, key) => ({
       healthCareDistrict: key,
-      totalamount: _.size(value, 'id')
+      totalamount: _.size(value, 'id'),
     }))
     .value();
 
-  const data = result.map(data => ({
+  const data = result.map((data) => ({
     name: data.healthCareDistrict,
-    value: data.totalamount
+    value: data.totalamount,
   }));
 
   const COLORS = [
@@ -118,7 +104,7 @@ export default function Stats() {
     '#000075',
     '#808080',
     '#ffffff',
-    '#000000'
+    '#000000',
   ];
 
   const RADIAN = Math.PI / 180;
@@ -127,7 +113,7 @@ export default function Stats() {
     cy,
     midAngle,
     innerRadius,
-    outerRadius
+    outerRadius,
   }) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -146,24 +132,22 @@ export default function Stats() {
 
   const columns = [
     {
+      id: 'date',
       Header: 'Date & Time',
       accessor: 'date',
       defaultSortDesc: 'true',
 
-      Cell: date => (
+      Cell: (date) => (
         <div>
           <Moment format="DD/MM/YYYY">{date.value}</Moment>
         </div>
-      )
+      ),
     },
     {
+      id: 'district',
       Header: 'Health Care District',
-      accessor: 'healthCareDistrict'
+      accessor: 'healthCareDistrict',
     },
-    {
-      Header: 'Infection Source',
-      accessor: 'infectionSourceCountry'
-    }
   ];
 
   return (
@@ -212,8 +196,6 @@ export default function Stats() {
             <p>Total confirmed deaths in Finland: </p>
             <h4 className={classes.number}>{_.size(deaths)}</h4>
 
-            <p>Total confirmed recovered cases in Finland: </p>
-            <h4 className={classes.number}>{_.size(recovered)}</h4>
             <Divider />
             <div className={classes.button}>
               <Button variant="outlined" color="secondary" href="index.html">
@@ -233,7 +215,22 @@ export default function Stats() {
           </div>
         </Grid>
         <Grid item xs={12}>
-          <ReactTable filterable={false} data={confirmed} columns={columns} />
+          <ReactTable
+            filterable={false}
+            sortable={false}
+            data={confirmed}
+            columns={columns}
+            sorted={[
+              {
+                id: 'date',
+                desc: true,
+              },
+              {
+                id: 'district',
+                desc: true,
+              },
+            ]}
+          />
           <Divider />
         </Grid>
       </Grid>
